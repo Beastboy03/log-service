@@ -85,7 +85,7 @@ Run functions locally and invoke them with the `sam local invoke` command.
 log-service$ sam local invoke 'Function name' --event events/event.json
 ```
 
-The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
+The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally.
 
 ```bash
 log-service$ sam local start-api
@@ -94,7 +94,7 @@ log-service$ sam local start-api
 To save the log entry.
 
 ```bash
-log-service$ curl --location --request POST 'http://localhost:3000/savelogs' \
+log-service$ curl --location --request POST 'http://<api-endpoint>/savelogs' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "severity": "error",
@@ -107,7 +107,7 @@ log-service$ curl --location --request POST 'http://localhost:3000/savelogs' \
 To retrieve the logs:
 
 ```bash
-curl --location --request GET 'http://localhost:3000/getlogs'
+curl --location --request GET 'http://<api-endpoint>/getlogs'
 
 ```
 
