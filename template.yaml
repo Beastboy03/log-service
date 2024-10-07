@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  SaveLogFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: log_service.app.save_logs
+      Runtime: python3.12
+      Events:
+        SaveLogAPI:
+          Type: Api
+          Properties:
+            Path: /savelogs
+            Method: post
+
+  GetLogsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: log_service.app.get_logs
+      Runtime: python3.12 
+      Events:
+        GetLogsAPI:
+          Type: Api
+          Properties:
+            Path: /getlogs
+            Method: get
+
+
+  LogEntriesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: LogEntriess
+      AttributeDefinitions:
+        - AttributeName: ID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ID
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
