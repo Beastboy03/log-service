@@ -6,7 +6,7 @@ This is a simple log service built using AWS Lambda, DynamoDB, and AWS API Gatew
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. Here's a breakdown of the essential files and their purposes..
 
-
+```bash
 log-service/
 │
 ├── README.md                # Project documentation
@@ -22,7 +22,7 @@ log-service/
 │   │   └── test_handler.py  # Example unit test for app.py
 │
 └── .gitignore               # files to ignore when pushing to GitHub
-
+```
 The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates the application code.
 
 If you prefer to use an integrated development environment (IDE) to build and test your application, you can use the AWS Toolkit.  
