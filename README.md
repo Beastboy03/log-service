@@ -1,13 +1,29 @@
-# log-service
+# Log Service Application
 
-This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
+This is a simple log service built using AWS Lambda, DynamoDB, and AWS API Gateway. It provides two endpoints:
+- `POST /save_logs`: Saves log entries with severity and message.
+- `GET /get_logs`: Retrieves the 100 most recent log entries.
 
-- hello_world - Code for the application's Lambda function.
-- events - Invocation events that you can use to invoke the function.
-- tests - Unit tests for the application code. 
-- template.yaml - A template that defines the application's AWS resources.
+This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. Here's a breakdown of the essential files and their purposes..
 
-The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
+
+log-service/
+│
+├── README.md                # Project documentation
+├── template.yaml            # AWS SAM template defining Lambda functions, API Gateway, and DynamoDB
+├── events/                  # Test event data
+│   └── event.json           # Sample input for local testing of Lambda functions
+├── log_service/             # Folder containing your Lambda function code
+│   ├── __init__.py          # Initializes the Python package 
+│   ├── app.py               # Main code for the Lambda functions (log saving and retrieval)
+│
+├── tests/                   # Unit tests for the Lambda functions 
+│   ├── unit/                # Folder for unit tests
+│   │   └── test_handler.py  # Example unit test for app.py
+│
+└── .gitignore               # files to ignore when pushing to GitHub
+
+The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates the application code.
 
 If you prefer to use an integrated development environment (IDE) to build and test your application, you can use the AWS Toolkit.  
 The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI to build and deploy serverless applications on AWS. The AWS Toolkit also adds a simplified step-through debugging experience for Lambda function code. See the following links to get started.
@@ -59,31 +75,60 @@ Build your application with the `sam build --use-container` command.
 log-service$ sam build --use-container
 ```
 
-The SAM CLI installs dependencies defined in `hello_world/requirements.txt`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
+The SAM CLI installs dependencies defined in `log-service/requirements.txt`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
 
 Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
 
 Run functions locally and invoke them with the `sam local invoke` command.
 
 ```bash
-log-service$ sam local invoke HelloWorldFunction --event events/event.json
+log-service$ sam local invoke 'Function name' --event events/event.json
 ```
 
 The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
 
 ```bash
 log-service$ sam local start-api
-log-service$ curl http://localhost:3000/
 ```
+
+To save the log entry.
+
+```bash
+log-service$ curl --location --request POST 'http://localhost:3000/savelogs' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "severity": "error",
+    "message": "Something went wrong!"
+}'
+
+```
+
+
+To retrieve the logs:
+
+```bash
+curl --location --request GET 'http://localhost:3000/getlogs'
+
+```
+
 
 The SAM CLI reads the application template to determine the API's routes and the functions that they invoke. The `Events` property on each function's definition includes the route and method for each path.
 
 ```yaml
       Events:
-        HelloWorld:
+        SaveLogAPI:
           Type: Api
           Properties:
-            Path: /hello
+            Path: /savelogs
+            Method: post
+```
+
+```yaml
+      Events:
+        GetLogsAPI:
+          Type: Api
+          Properties:
+            Path: /getlogs
             Method: get
 ```
 
@@ -97,7 +142,7 @@ To simplify troubleshooting, SAM CLI has a command called `sam logs`. `sam logs`
 `NOTE`: This command works for all AWS Lambda functions; not just the ones you deploy using SAM.
 
 ```bash
-log-service$ sam logs -n HelloWorldFunction --stack-name "log-service" --tail
+log-service$ sam logs -n "Function Name" --stack-name "Stack-name" --tail
 ```
 
 You can find more information and examples about filtering Lambda function logs in the [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
@@ -127,4 +172,4 @@ sam delete --stack-name "log-service"
 
 See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
 
-Next, you can use AWS Serverless Application Repository to deploy ready to use Apps that go beyond hello world samples and learn how authors developed their applications: [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/)
+
