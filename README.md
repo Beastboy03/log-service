@@ -53,7 +53,7 @@ To use the SAM CLI, you need the following tools.
 To build and deploy your application for the first time, run the following in your shell:
 
 ```bash
-sam build --use-container
+sam build
 sam deploy --guided
 ```
 
@@ -67,12 +67,22 @@ The first command will build the source of your application. The second command 
 
 You can find your API Gateway Endpoint URL in the output values displayed after deployment.
 
-## Use the SAM CLI to build and test locally
+## Test the Endpoints: After deployment, you will get an API URL. You can test the endpoints using curl or Postman.
 
-Build your application with the `sam build --use-container` command.
-
+Save a log entry:
 ```bash
-log-service$ sam build --use-container
+curl -X POST https://<api-url>/Prod/savelogs \
+-H "Content-Type: application/json" \
+-d '{"Severity": "info", "Message": "Test log entry"}'
+
+
+```
+
+Get log entries:
+```bash
+curl https://<api-url>/Prod/getlogs
+
+
 ```
 
 The SAM CLI installs dependencies defined in `log-service/requirements.txt`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
@@ -89,26 +99,6 @@ The SAM CLI can also emulate your application's API. Use the `sam local start-ap
 
 ```bash
 log-service$ sam local start-api
-```
-
-To save the log entry.
-
-```bash
-log-service$ curl --location --request POST 'http://<api-endpoint>/savelogs' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "severity": "error",
-    "message": "Something went wrong!"
-}'
-
-```
-
-
-To retrieve the logs:
-
-```bash
-curl --location --request GET 'http://<api-endpoint>/getlogs'
-
 ```
 
 
