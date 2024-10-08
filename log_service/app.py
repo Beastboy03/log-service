@@ -16,7 +16,7 @@ def save_logs(event, context):
         else:
             body = event  # For direct invocation (like in test events)
 
-        log_id = body.get('LogID', str(uuid.uuid4()))
+        log_id = body.get('ID', str(uuid.uuid4()))
         timestamp = body.get('DateTime', datetime.utcnow().isoformat())
         severity = body.get('Severity')
         message = body.get('Message')
@@ -30,7 +30,7 @@ def save_logs(event, context):
 
         # Creating the log entry
         log_entry = {
-            'LogID': log_id,
+            'ID': log_id,
             'DateTime': timestamp,
             'Severity': severity,
             'Message': message
