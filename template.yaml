@@ -60,5 +60,5 @@ Outputs:
     Value: !Sub "https://${ApiGatewayGet}.execute-api.${AWS::Region}.amazonaws.com/Prod/logs"
   
   CreateLogApi:
-    Description: "API Gateway endpoint URL for CreateLogFunction"
+    Description: "API Gateway endpoint URL for SaveLogsFunction"
     Value: !Sub "https://${ApiGatewayPost}.execute-api.${AWS::Region}.amazonaws.com/Prod/logs"
