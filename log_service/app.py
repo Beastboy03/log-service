@@ -6,7 +6,7 @@ from boto3.dynamodb.conditions import Key
 
 #initialise DynamoDB client 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('LogEntriess')
+table = dynamodb.Table('LogEntries')
 
 def save_logs(event, context):
     try:
