@@ -74,13 +74,48 @@ Save a log entry:
 curl -X POST https://<api-url>/Prod/savelogs \
 -H "Content-Type: application/json" \
 -d '{"Severity": "info", "Message": "Test log entry"}'
+```
 
+If the log entry is successfully created, you should receive a response similar to:
+```bash
+{
+  "message": "Log entry created successfully",
+  "LogID": "unique-log-id-1234"
+}
 
 ```
+
+
 
 Get log entries:
 ```bash
 curl https://<api-url>/Prod/getlogs
+
+```
+You should receive a JSON array of log entries. Each log entry will have the following fields,
+This confirms that the logs were successfully retrieved from the DynamoDB table, and they are sorted by the most recent entries.:
+
+LogID: Unique identifier for the log entry.
+DateTime: Timestamp of the log entry.
+Severity: Severity level (info, warning, or error).
+Message: The log message.
+
+Example response:
+```bash
+[
+  {
+    "LogID": "unique-log-id-1234",
+    "DateTime": "2024-10-08T10:00:00Z",
+    "Severity": "info",
+    "Message": "Test log entry"
+  },
+  {
+    "LogID": "unique-log-id-5678",
+    "DateTime": "2024-10-08T10:05:00Z",
+    "Severity": "error",
+    "Message": "Error in the system"
+  }
+]
 
 
 ```
