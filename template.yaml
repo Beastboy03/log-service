@@ -23,7 +23,7 @@ Resources:
     Properties:
       Handler: log_service.app.get_logs
       Runtime: python3.12
-      CodeUri: ./get_logs
+      CodeUri: ./log_service
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref LogEntriesTable
@@ -41,7 +41,7 @@ Resources:
     Properties:
       Handler: log_service.app.save_logs
       Runtime: python3.12
-      CodeUri: ./save_logs
+      CodeUri: ./log_service
       Policies:
         - DynamoDBWritePolicy:
             TableName: !Ref LogEntriesTable
