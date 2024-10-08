@@ -1,9 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: SAM template for Lambda functions and DynamoDB
 
-# DynamoDB Table for storing log entries
 Resources:
+  # DynamoDB Table to store log entries
   LogEntriesTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -15,50 +14,53 @@ Resources:
         - AttributeName: ID
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-      SSESpecification:
-        SSEEnabled: true  # Enable server-side encryption
 
-  GetLogsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: log_service.app.get_logs
-      Runtime: python3.12
-      CodeUri: ./log_service
-      Policies:
-        - DynamoDBReadPolicy:
-            TableName: !Ref LogEntriesTable
-      Environment:
-        TABLE_NAME: !Ref LogEntriesTable
-      Events:
-        ApiGatewayGet:
-          Type: Api
-          Properties:
-            Path: /logs
-            Method: get
 
+  # Lambda function to save log entries
   SaveLogFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: log_service.app.save_logs
       Runtime: python3.12
       CodeUri: ./log_service
-      Policies:
-        - DynamoDBWritePolicy:
-            TableName: !Ref LogEntriesTable
+      Timeout: 300
       Environment:
-        TABLE_NAME: !Ref LogEntriesTable
+        Variables:
+          TABLE_NAME: !Ref LogEntriesTable
       Events:
-        ApiGatewayPost:
+        SaveLogAPI:
           Type: Api
           Properties:
-            Path: /logs
+            Path: /savelogs
             Method: post
+            RestApiId: !Ref LogServiceAPI  # Reference to the API Gateway
+
+  # Lambda function to retrieve log entries
+  GetLogsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: log_service.app.get_logs
+      Runtime: python3.12
+      CodeUri: ./log_service
+      Timeout: 300
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref LogEntriesTable
+      Events:
+        GetLogsAPI:
+          Type: Api
+          Properties:
+            Path: /getlogs
+            Method: get
+            RestApiId: !Ref LogServiceAPI  # Reference to the API Gateway
+
+  # API Gateway definition
+  LogServiceAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
 
 Outputs:
-  GetLogsApi:
-    Description: "API Gateway endpoint URL for GetLogsFunction"
-    Value: !Sub "https://${ApiGatewayGet}.execute-api.${AWS::Region}.amazonaws.com/Prod/logs"
-  
-  CreateLogApi:
-    Description: "API Gateway endpoint URL for SaveLogsFunction"
-    Value: !Sub "https://${ApiGatewayPost}.execute-api.${AWS::Region}.amazonaws.com/Prod/logs"
+  ApiUrl:
+    Description: "API Gateway endpoint URL for the log service"
+    Value: !Sub "https://${LogServiceAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod"
